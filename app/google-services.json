@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "719671259411",
+    "firebase_url": "https://roadcrossing-41749.firebaseio.com",
+    "project_id": "roadcrossing-41749",
+    "storage_bucket": "roadcrossing-41749.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:719671259411:android:c2efd17616109eb8792ae6",
+        "android_client_info": {
+          "package_name": "com.example.roadcross"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "719671259411-uktslj68j5ic9g0hrb7ma3srgde7o25q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOmfsvw0MJ31WPlDZN4ZsR4kEpsL9ANpA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "719671259411-uktslj68j5ic9g0hrb7ma3srgde7o25q.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
