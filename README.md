@@ -1,4 +1,7 @@
 # roadcrosser
+
+app/src/main/java/com/example/roadcross/StartActivity.java i made some changes there
+
 the app we're making as a project
 
 here is what we currently have to do
