@@ -1,5 +1,6 @@
 package com.example.roadcross;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -14,6 +15,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.example.roadcross.ui.login.LoginActivity;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -40,6 +42,9 @@ public class StartActivity extends AppCompatActivity {
     int successCode;
 
     LocationSettingsRequest.Builder builder;
+
+    private int locationRequestCode = 1000;
+    private double wayLatitude = 0.0, wayLongitude = 0.0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +59,7 @@ public class StartActivity extends AppCompatActivity {
         lRequest.setInterval(3000);
 
         successCode=GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
+        fusedLocationClient= LocationServices.getFusedLocationProviderClient(StartActivity.this);
 
         builder = new LocationSettingsRequest.Builder().addLocationRequest(lRequest );
         register.setOnClickListener(new View.OnClickListener() {
@@ -75,30 +81,49 @@ public class StartActivity extends AppCompatActivity {
         protect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fusedLocationClient= LocationServices.getFusedLocationProviderClient(StartActivity.this);
-                getLocation();
+                if (ActivityCompat.checkSelfPermission(StartActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(StartActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                            locationRequestCode);
+
+                } else {
+                    // already permission granted
+                    // get location here
+                    //
+                    //now THIS fusedLocationClient doesn't work but at least we have permission up there
+                    //
+                    fusedLocationClient.getLastLocation().addOnSuccessListener(StartActivity.this, location -> {
+                        if (location != null) {
+                            wayLatitude = location.getLatitude();
+                            wayLongitude = location.getLongitude();
+                            String loc=String.format("%s -- %s",wayLatitude,wayLongitude);
+                            Toast.makeText(StartActivity.this, loc, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
             }
         });
 
     }
-
-    private void getLocation() {
-        try {
-            //fusedLocationClient is never successful
-            fusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                @Override
-                public void onSuccess(Location location) {
-                    Location loc = (Location) location;
-                    // Got last known location. In some rare situations this can be null.
-                    protect.setText(location.toString());
-                    if (location != null) {
-                        // Logic to handle location object
-                        protect.setText("not found");
-                    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case 1000: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    fusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
+                        if (location != null) {
+                            wayLatitude = location.getLatitude();
+                            wayLongitude = location.getLongitude();
+                            Toast.makeText(this, "%s -- %s", Toast.LENGTH_SHORT).show();                        }
+                    });
+                } else {
+                    Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
                 }
-            });
-        }   finally {
-            protect.setText(String.valueOf( fusedLocationClient.getLastLocation().isSuccessful()));
+                break;
+            }
         }
     }
+
 }
